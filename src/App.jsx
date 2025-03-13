@@ -42,33 +42,49 @@ const App = () => {
     if (selectedProducts.some((p) => p.id === product.id)) {
       setSelectedProducts(selectedProducts.filter((p) => p.id !== product.id));
     } else {
-      const productWithVariants = {
+      const productWithVariants = JSON.parse(JSON.stringify({
         ...product,
         selectedVariants: product.variants.map((variant) => variant.id),
-      };
+      }));
       setSelectedProducts([...selectedProducts, productWithVariants]);
     }
   };
 
   const toggleVariantSelection = (productId, variantId) => {
-    setSelectedProducts((prevSelectedProducts) =>
-      prevSelectedProducts.map((product) =>
+    setSelectedProducts((prevSelectedProducts) => {
+      const isProductSelected = prevSelectedProducts.some((p) => p.id === productId);
+  
+      if (!isProductSelected) {
+        const productToAdd = allProducts.find((p) => p.id === productId);
+        if (productToAdd) {
+          return [
+            ...prevSelectedProducts,
+            {
+              ...productToAdd,
+              selectedVariants: [variantId],
+            },
+          ];
+        }
+      }
+  
+      return prevSelectedProducts.map((product) =>
         product.id === productId
           ? {
               ...product,
               selectedVariants: product.selectedVariants.includes(variantId)
-                ? product.selectedVariants.filter((id) => id !== variantId)
-                : [...product.selectedVariants, variantId],
+                ? product.selectedVariants.filter((id) => id !== variantId) 
+                : [...product.selectedVariants, variantId], 
             }
           : product
-      )
-    );
+      );
+    });
   };
 
   const applySelectedProducts = () => {
     if (selectedProducts.length > 0 && editingIndex !== null) {
       const updatedProducts = [...products];
-      updatedProducts.splice(editingIndex, 1, ...selectedProducts);
+      const selectedProductsCopy = JSON.parse(JSON.stringify(selectedProducts));
+      updatedProducts.splice(editingIndex, 1, ...selectedProductsCopy);
       setProducts(updatedProducts);
     }
     closeProductPicker();
@@ -84,19 +100,19 @@ const App = () => {
   };
 
   const removeVariant = (productIndex, variantIndex) => {
-    const updatedProducts = [...products];
-
-    const product = updatedProducts[productIndex];
-
-    product.variants.splice(variantIndex, 1);
-
-    if (product.variants.length === 0) {
+    const updatedProducts = JSON.parse(JSON.stringify(products)); 
+  
+    const newProduct = updatedProducts[productIndex];
+    const varaintId = newProduct.variants[variantIndex].id
+    newProduct.variants.splice(variantIndex, 1);
+  
+    if (newProduct.variants.length === 0) {
       updatedProducts.splice(productIndex, 1);
     }
-
-    setSelectedProducts(updatedProducts);
+  
+    setProducts(updatedProducts);
+    toggleVariantSelection(newProduct.id,varaintId)
   };
-
   const addEmptyProduct = () => {
     setProducts([
       ...products,
@@ -213,7 +229,7 @@ const App = () => {
 
   useEffect(() => {
     setLoading(true);
-    fetchProducts({ search: searchtext, page: pageNumber, limit: 10 })
+    fetchProducts({ search: searchtext, page: 2, limit: 1 })
       .then((response) => {
         if (response.length === 0) {
           sethasMore(false);

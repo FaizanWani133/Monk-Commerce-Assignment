@@ -47,7 +47,7 @@ const ProductListItem = ({
         )}
       </div>
 
-      {product.variants.length > 0 && (
+      {product.variants.length > 1 && (
         <div className="flex justify-end py-2 items-center">
           <a
             className="text-blue-600 hover:text-blue-800 flex items-center text-sm underline p-1"
@@ -60,7 +60,7 @@ const ProductListItem = ({
         </div>
       )}
 
-      {showVariants && product.variants.length > 0 && (
+      {((showVariants && product.variants.length > 1) || (product.variants.length === 1)) && (
         <div className="mt-4 pl-10">
           <ul className="space-y-2">
             {product.variants.map((variant, variantIndex) => {
