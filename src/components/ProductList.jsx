@@ -47,7 +47,7 @@ const ProductList = ({
 
       <div className="flex mt-6 justify-end">
         <button
-          className="text-green px-10 py-2 rounded border-2 font-semibold"
+          className="text-green-700 px-10 py-2 rounded border-2 font-semibold"
           onClick={onAddProduct}
         >
           Add Product
