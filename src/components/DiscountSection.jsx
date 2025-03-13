@@ -42,7 +42,7 @@ const DiscountSection = ({ rounded }) => {
           <select
             className={`bg-white border-0 ${
               rounded ? "rounded-2xl" : ""
-            }  text-sm outline-none h-[32px]`}
+            }  text-sm outline-none h-[32px] w-[80px]`}
             value={discountType}
             onChange={(e) => toggleDiscountType(e.target.value)}
           >

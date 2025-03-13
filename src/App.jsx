@@ -1,56 +1,9 @@
-import React, { useState } from "react";
-import ProductList from './components/ProductList'
+import React, { useEffect, useState } from "react";
+import ProductList from "./components/ProductList";
 import ProductPicker from "./components/ProductPicker";
-const allProducts = [
-  {
-    id: 77,
-    title: "Fog Linen Chambray Towel - Beige Stripe",
-    variants: [
-      {
-        id: 1,
-        product_id: 77,
-        title: "XS / Silver",
-        price: "49",
-      },
-      {
-        id: 2,
-        product_id: 77,
-        title: "S / Silver",
-        price: "49",
-      },
-      {
-        id: 3,
-        product_id: 77,
-        title: "M / Silver",
-        price: "49",
-      },
-    ],
-    image: {
-      id: 266,
-      product_id: 77,
-      src: "https://cdn11.bigcommerce.com/s-p1xcugzp89/products/77/images/266/foglinenbeigestripetowel1b.1647248662.386.513.jpg?c=1",
-    },
-  },
-  {
-    id: 80,
-    title: "Orbit Terrarium - Large",
-    variants: [
-      {
-        id: 64,
-        product_id: 80,
-        title: "Default Title",
-        price: "109",
-      },
-    ],
-    image: {
-      id: 272,
-      product_id: 80,
-      src: "https://cdn11.bigcommerce.com/s-p1xcugzp89/products/80/images/272/roundterrariumlarge.1647248662.386.513.jpg?c=1",
-    },
-  },
-];
-
+import { fetchProducts } from "./api";
 const App = () => {
+  const [allProducts, setAllProducts] = useState([]);
   const [products, setProducts] = useState([
     {
       id: Date.now(),
@@ -71,6 +24,10 @@ const App = () => {
   const [draggedItem, setDraggedItem] = useState(null);
   const [draggedVariant, setDraggedVariant] = useState(null);
   const [draggedProductIndex, setDraggedProductIndex] = useState(null);
+  const [searchtext, setSearchtext] = useState("");
+  const [pageNumber, setPageNumber] = useState(1);
+  const [hasMore, sethasMore] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const openProductPicker = (index) => {
     setEditingIndex(index);
@@ -144,7 +101,7 @@ const App = () => {
     setProducts([
       ...products,
       {
-        id: Date.now(), // Temporary ID
+        id: Date.now(),
         title: "Select Product",
         variants: [],
         image: {
@@ -227,6 +184,51 @@ const App = () => {
     setDraggedVariant(null);
     setDraggedProductIndex(null);
   };
+
+  const handleInputChange = (event) => {
+    setSearchtext(event.target.value);
+  };
+
+  const handleLoadMore = () => {
+    if (hasMore) {
+      setLoading(true);
+      fetchProducts({
+        page: pageNumber,
+        limit: 10,
+        search: searchtext,
+      })
+        .then((response) => {
+          if (response.length > 0) {
+            setAllProducts((prevProducts) => [...prevProducts, ...response]);
+            setPageNumber((prevPage) => prevPage + 1);
+          } else {
+            sethasMore(false);
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+  };
+
+  useEffect(() => {
+    setLoading(true);
+    fetchProducts({ search: searchtext, page: pageNumber, limit: 10 })
+      .then((response) => {
+        if (response.length === 0) {
+          sethasMore(false);
+          setLoading(false);
+        }
+        setAllProducts(response);
+      })
+      .catch(() => {
+        sethasMore(false);
+        setLoading(false);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [searchtext]);
   return (
     <div className="p-10 max-w-3/6 min-w-[422px]">
       <h2 className="text-xl font-semibold mb-4 text-left">Add products</h2>
@@ -255,6 +257,10 @@ const App = () => {
           onToggleProductSelection={toggleProductSelection}
           onToggleVariantSelection={toggleVariantSelection}
           onApply={applySelectedProducts}
+          onInputChange={handleInputChange}
+          hasMore={true}
+          onLoadMore={handleLoadMore}
+          isLoading={loading}
         />
       )}
     </div>

@@ -24,7 +24,7 @@ const ProductListVaraintItem = ({
         <h4>{variant.title}</h4>
       </div>
       <DiscountSection rounded={true} />
-      {product.selectedVariants.length > 0 && (
+      {product.selectedVariants.length > 1 && (
         <CrossButton
           onClick={() => onRemoveVariant(productIndex, variantIndex)}
         />

@@ -56,7 +56,7 @@ const ProductListItem = ({
           >
             {showVariants ? <>Hide Variants</> : <>Show Variants</>}
           </a>
-          <img src={ChevronIcon} alt="chevron icon" className="w-3 h-3" />
+          <img src={ChevronIcon} alt="chevron icon" className="w-3 h-3 mt-1" />
         </div>
       )}
 
