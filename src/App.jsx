@@ -228,7 +228,8 @@ const App = () => {
     setDraggedProductIndex(null);
   };
   return (
-    <div className="p-6 max-w-2/3 min-w-[422px] bg-gray-50">
+    <div className="p-10 max-w-3/6 min-w-[422px]">
+      <h2 className="text-xl font-semibold mb-4 text-left">Add products</h2>
       <ProductList
         products={products}
         onAddProduct={addEmptyProduct}
@@ -245,7 +246,7 @@ const App = () => {
         onVariantDragEnd={handleVariantDragEnd}
       />
 
-      {/* {isPickerOpen && (
+      {isPickerOpen && (
         <ProductPicker
           isOpen={isPickerOpen}
           onClose={closeProductPicker}
@@ -255,7 +256,7 @@ const App = () => {
           onToggleVariantSelection={toggleVariantSelection}
           onApply={applySelectedProducts}
         />
-      )} */}
+      )}
     </div>
   );
 };

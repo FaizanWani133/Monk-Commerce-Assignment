@@ -11,7 +11,7 @@ const ProductPicker = ({
   onApply,
 }) => {
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 flex items-center justify-center ">
       <div className="bg-white rounded-lg w-3/4 max-w-4xl h-3/4 flex flex-col">
         <div className="p-4 border-b flex justify-between items-center">
           <h2 className="text-xl font-semibold">Select Products</h2>
