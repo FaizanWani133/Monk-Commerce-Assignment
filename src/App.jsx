@@ -229,7 +229,7 @@ const App = () => {
 
   useEffect(() => {
     setLoading(true);
-    fetchProducts({ search: searchtext, page: 2, limit: 1 })
+    fetchProducts({ search: searchtext, page: pageNumber, limit: 10 })
       .then((response) => {
         if (response.length === 0) {
           sethasMore(false);
