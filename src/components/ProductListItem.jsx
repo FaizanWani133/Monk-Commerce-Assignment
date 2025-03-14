@@ -5,13 +5,14 @@ import EditButton from "./AtomicComponents/EditButton";
 import CrossButton from "./AtomicComponents/CrossButton";
 import ProductListVaraintItem from "./ProductListVaraintItem";
 import ChevronIcon from "../assets/blue-chevron.svg";
+import ProductPicker from "./ProductPicker";
 
 const ProductListItem = ({
-  product,
+  product: pro,
   index,
   onRemoveProduct,
-  onEditProduct,
   onRemoveVariant,
+  handleSubmit,
   onDragStart,
   onDragOver,
   onDragEnd,
@@ -20,11 +21,34 @@ const ProductListItem = ({
   onVariantDragEnd,
   showRemoveButton,
 }) => {
+  const [isPickerOpen, setIsPickerOpen] = useState(false);
   const [showVariants, setShowVariants] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(pro);
 
   const toggleVariants = () => {
     setShowVariants(!showVariants);
   };
+
+  const closeProductPicker = () => {
+    setIsPickerOpen(false);
+  };
+  
+  const openProductPicker = () => {
+    setIsPickerOpen(true);
+  };
+  
+  function handleApply(products) {
+    if (products.length > 0) {
+      handleSubmit(products);
+      if (products[0].id !== selectedProduct.id) {
+        setSelectedProduct(products[0]);
+      }
+    }
+    closeProductPicker();
+  }
+  React.useEffect(() => {
+    setSelectedProduct(pro);
+  }, [pro]);
 
   return (
     <li className="pb-4 border-b">
@@ -35,9 +59,9 @@ const ProductListItem = ({
           onDragEnd={onDragEnd}
         />
         <h3 className="font-medium">{index + 1}</h3>
-        <div className="bg-white flex items-center gap-2 justify-between h-[32px] flex-1  px-2">
-          <h3 className="font-medium">{product.title}</h3>
-          <EditButton onClick={() => onEditProduct(index)} />
+        <div className="bg-white flex items-center gap-2 justify-between h-[32px] flex-1 px-2">
+          <h3 className="font-medium">{selectedProduct.title}</h3>
+          <EditButton onClick={openProductPicker} />
         </div>
 
         <DiscountSection />
@@ -47,7 +71,7 @@ const ProductListItem = ({
         )}
       </div>
 
-      {product.variants.length > 1 && (
+      {selectedProduct.variants.length > 1 && (
         <div className="flex justify-end py-2 items-center">
           <a
             className="text-blue-600 hover:text-blue-800 flex items-center text-sm underline p-1"
@@ -60,28 +84,37 @@ const ProductListItem = ({
         </div>
       )}
 
-      {((showVariants && product.variants.length > 1) || (product.variants.length === 1)) && (
+      {((showVariants && selectedProduct.variants.length > 1) ||
+        selectedProduct.variants.length === 1) && (
         <div className="mt-4 pl-10">
           <ul className="space-y-2">
-            {product.variants.map((variant, variantIndex) => {
-              if (product.selectedVariants.includes(variant.id)) {
-                return (
-                  <ProductListVaraintItem
-                    key={variant.id}
-                    onRemoveVariant={onRemoveVariant}
-                    onVariantDragEnd={onVariantDragEnd}
-                    onVariantDragOver={onVariantDragOver}
-                    onVariantDragStart={onVariantDragStart}
-                    product={product}
-                    productIndex={index}
-                    variant={variant}
-                    variantIndex={variantIndex}
-                  />
-                );
-              }
+            {selectedProduct.variants.map((variant, variantIndex) => {
+              return (
+                <ProductListVaraintItem
+                  key={variant.id}
+                  onRemoveVariant={onRemoveVariant}
+                  onVariantDragEnd={onVariantDragEnd}
+                  onVariantDragOver={onVariantDragOver}
+                  onVariantDragStart={onVariantDragStart}
+                  product={selectedProduct}
+                  productIndex={index}
+                  variant={variant}
+                  variantIndex={variantIndex}
+                />
+              );
             })}
           </ul>
         </div>
+      )}
+      {isPickerOpen && (
+        <ProductPicker
+          isOpen={isPickerOpen}
+          onClose={closeProductPicker}
+          selectedProducts={
+            selectedProduct.variants.length > 0 ? [selectedProduct] : []
+          }
+          onApply={handleApply}
+        />
       )}
     </li>
   );

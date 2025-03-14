@@ -7,7 +7,7 @@ const VariantList = ({
   onToggleVariantSelection,
 }) => {
   return (
-    <div className="mt-2 ">
+    <div className="mt-2">
       {product.variants.map((variant) => (
         <div
           key={variant.id}
@@ -16,9 +16,9 @@ const VariantList = ({
           <div className="flex items-center gap-4 p-4 pl-10 pr-6 w-<100>">
             <CustomCheckbox
               state={
-                selectedVariants.includes(variant.id) ? "checked" : "unchecked"
+                selectedVariants.find((el)=>el.id===variant.id) ? "checked" : "unchecked"
               }
-              onClick={() => onToggleVariantSelection(variant.id)}
+              onClick={() => onToggleVariantSelection(variant)}
             />
             <h3 className="font-medium">{variant.title}</h3>
             <h3 className="font-medium ml-auto">${variant.price}</h3>

@@ -37,6 +37,7 @@ const DiscountSection = ({ rounded }) => {
               rounded ? "rounded-2xl" : ""
             } p-2 outline-none w-[69px] h-[32px] bg-white`}
             value={discountvalue}
+            type="number"
             onChange={(e) => handleDiscountvalueChange(e.target.value)}
           />
           <select
